@@ -1,0 +1,13 @@
+@(customerForm: Form[CustomerFile])
+@import helper._
+
+@main("Upload Customer List Page") {
+        
+    <h2>Upload Customer List Page</h2>
+    
+	 @helper.form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
+		  @helper.inputFile(customerForm("file"))
+		  <input type="submit" value="Upload"/>
+	 }
+    
+}
