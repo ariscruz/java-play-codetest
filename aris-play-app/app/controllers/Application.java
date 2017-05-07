@@ -30,16 +30,19 @@ public class Application extends Controller {
 		return redirect(routes.Application.loadFile());
     }
 	
-	public static Result sortCustomers() {
+	public static CompletionStage<Result> sortCustomers() {
 		
 		JsonNode json = request().body().asJson();
-		if (json == null) {
+		/*if (json == null) {
 	        return badRequest("Expecting Json data");
 	    }
 
 		List<Customer> customersList = process(json.toString(), false);
         JsonNode jsonParsed = Json.toJson(customersList);
-        return created(jsonParsed);
+        return created(jsonParsed); */
+		
+		return CompletableFuture.supplyAsync(() -> process(json.toString(), false))
+                .thenApply(customerList -> created(Json.toJson(customerList)));
 	}
 
 	public static Result loadFile() {
@@ -48,13 +51,16 @@ public class Application extends Controller {
 	}
 	
 
-    public static Result upload() throws IOException {
+    public static CompletionStage<Result> upload() throws IOException {
 		play.mvc.Http.MultipartFormData body = request().body().asMultipartFormData();
 	    play.mvc.Http.MultipartFormData.FilePart filePart = body.getFile("file");
         final File file = filePart.getFile();
-        List<Customer> customersList = process(file, true);
+        /*List<Customer> customersList = process(file, true);
         JsonNode jsonParsed = Json.toJson(customersList);
-	    return created(jsonParsed);
+	    return created(jsonParsed);*/
+	    
+	    return CompletableFuture.supplyAsync(() -> process(file, true))
+                .thenApply(customerList -> created(Json.toJson(customerList)));
 		
     }
 	
